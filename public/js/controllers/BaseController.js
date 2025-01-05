@@ -15,6 +15,7 @@ export class BaseController {
   }
 
   manejarError(error) {
+    
     // Implementar manejo de errores específico
     console.error('Error en controlador:', error);
   }

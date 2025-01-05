@@ -1,6 +1,7 @@
 import { CursoModel } from './models/CursoModel.js';
 import { CursoView } from './views/CursoView.js';
 import { CursoController } from './controllers/CursoController.js';
+import { DashboardController } from './controllers/DashboardController.js';
 
 // Inicializar modelos, vistas y controladores
 const cursoModel = new CursoModel();
@@ -21,7 +22,7 @@ async function login(username, password) {
     if (data.success) {
         usuarioLogueado = username;
         alert(data.message);
-        window.location.href = '/public/dashboard.html';
+        window.location.href = '/dashboard.html';
     } else {
         alert(data.message);
     }
@@ -41,17 +42,6 @@ async function register(username, password) {
     }
 }
 
-async function cargarCursosDashboard() {
-    const cursos = await cursoModel.obtenerCursos();
-    const misCursos = cursos.slice(0, 1); // Simulación de cursos inscritos
-    const disponibles = cursos.slice(1);
-
-    // Renderizar cursos
-    cursoView.renderizarCursos(misCursos, 'misCursos');
-    cursoView.renderizarCursos(disponibles, 'listaCursos');
-}
-
-// Eventos principales
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -76,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (dashboardCursos) {
-        cargarCursosDashboard();
+        // Inicializar controlador de dashboard.
+        new DashboardController();
     }
 });
