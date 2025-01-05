@@ -3,7 +3,7 @@
     {
       "id": 1,
       "titulo": "Introducción a JavaScript",
-      "descripcion": "Aprende los fundamentos de JavaScript desde cero",
+      "descripcion": "Aprende los fundamentos de JavaScript desde cero.",
       "contenido": [
         {
           "titulo": "Variables y Tipos de Datos",
@@ -25,6 +25,59 @@
               "Un operador"
             ],
             "respuestaCorrecta": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": 2,
+      "titulo": "Fundamentos de HTML y CSS",
+      "descripcion": "Descubre cómo estructurar y diseñar páginas web.",
+      "contenido": [
+        {
+          "titulo": "Estructura de HTML",
+          "texto": "HTML define la estructura básica de una página web..."
+        },
+        {
+          "titulo": "Estilos con CSS",
+          "texto": "CSS permite aplicar estilos visuales a los elementos HTML..."
+        }
+      ],
+      "evaluacion": {
+        "preguntas": [
+          {
+            "pregunta": "¿Qué significa HTML?",
+            "opciones": [
+              "HyperText Markup Language",
+              "Home Tool Markup Language",
+              "HyperLink and Text Markup Language",
+              "None of the above"
+            ],
+            "respuestaCorrecta": 0
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "titulo": "Introducción a Python",
+      "descripcion": "Aprende los conceptos básicos de Python y su sintaxis.",
+      "contenido": [
+        {
+          "titulo": "Variables y Tipos de Datos",
+          "texto": "Python tiene varios tipos de datos fundamentales como int, float y str..."
+        },
+        {
+          "titulo": "Estructuras de Control",
+          "texto": "Usa if, for y while para controlar el flujo del programa..."
+        }
+      ],
+      "evaluacion": {
+        "preguntas": [
+          {
+            "pregunta": "¿Qué operador se usa para la asignación en Python?",
+            "opciones": ["+", "=", "==", ":"],
+            "respuestaCorrecta": 1
           }
         ]
       }
