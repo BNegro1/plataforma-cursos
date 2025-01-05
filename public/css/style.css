@@ -1,9 +1,13 @@
 :root {
   --color-primario: #2c3e50;
   --color-secundario: #3498db;
+  --color-terciario: #e74c3c;
+  --color-acento: #f1c40f;
   --color-fondo: #ecf0f1;
   --color-texto: #2c3e50;
+  --color-texto-secundario: #7f8c8d;
   --sombra: 0 2px 4px rgba(0,0,0,0.1);
+  --sombra-hover: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 * {
@@ -71,38 +75,28 @@ main {
   padding: 1rem;
   box-shadow: var(--sombra);
   transition: transform 0.2s;
+  border: 1px solid var(--color-secundario);
 }
 
 .curso-card:hover {
   transform: translateY(-4px);
+  box-shadow: var(--sombra-hover);
 }
 
 .oculto {
   display: none;
 }
-.login-section {
-  max-width: 400px;
-  margin: 2rem auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: var(--sombra);
+
+footer {
+  background-color: var(--color-primario);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
 }
 
-.login-section form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.login-section input {
-  padding: 0.5rem;
-  border: 1px solid var(--color-primario);
-  border-radius: 4px;
-}
-
-.login-section button {
-  background-color: var(--color-secundario);
+.boton-acento {
+  background-color: var(--color-acento);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -110,6 +104,27 @@ main {
   cursor: pointer;
 }
 
-.login-section button:hover {
-  opacity: 0.9;
+.boton-acento:hover {
+  background-color: darken(var(--color-acento), 10%);
+}
+
+.texto-secundario {
+  color: var(--color-texto-secundario);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--color-texto-secundario);
+  border-radius: 4px;
 }
