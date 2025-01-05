@@ -80,3 +80,36 @@ main {
 .oculto {
   display: none;
 }
+.login-section {
+  max-width: 400px;
+  margin: 2rem auto;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--sombra);
+}
+
+.login-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-section input {
+  padding: 0.5rem;
+  border: 1px solid var(--color-primario);
+  border-radius: 4px;
+}
+
+.login-section button {
+  background-color: var(--color-secundario);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-section button:hover {
+  opacity: 0.9;
+}

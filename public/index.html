@@ -1,41 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma de Aprendizaje</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <header>
         <h1>Plataforma de Aprendizaje</h1>
         <nav>
-            <button id="cursosBtn" class="nav-btn">Cursos</button>
-            <button id="dashboardBtn" class="nav-btn">Mi Dashboard</button>
+            <a href="login.html" class="nav-btn">Login</a>
+            <a href="dashboard.html" class="nav-btn">Dashboard</a>
         </nav>
     </header>
 
     <main>
-        <section id="cursos" class="seccion">
-            <h2>Cursos Disponibles</h2>
-            <div id="listaCursos" class="grid-cursos"></div>
-        </section>
-
-        <section id="dashboard" class="seccion oculto">
-            <h2>Mi Dashboard</h2>
-            <div id="misCursos" class="grid-cursos"></div>
-        </section>
-
-        <section id="contenidoCurso" class="seccion oculto">
-            <h2 id="tituloCurso"></h2>
-            <div id="contenido"></div>
-            <div id="evaluacion" class="oculto">
-                <h3>Evaluación</h3>
-                <form id="formEvaluacion"></form>
-            </div>
+        <section>
+            <h2>Bienvenido</h2>
+            <p>Explora y aprende con nuestros cursos diseñados para ti.</p>
         </section>
     </main>
-
-    <script type="module" src="/js/app.js"></script>
 </body>
+
 </html>
