@@ -1,0 +1,11 @@
+{
+  "name": "plataforma-aprendizaje",
+  "version": "1.0.0",
+  "description": "Plataforma de aprendizaje en línea usando JavaScript puro",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "type": "module"
+}

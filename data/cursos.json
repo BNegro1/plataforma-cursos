@@ -1,0 +1,33 @@
+{
+  "cursos": [
+    {
+      "id": 1,
+      "titulo": "Introducción a JavaScript",
+      "descripcion": "Aprende los fundamentos de JavaScript desde cero",
+      "contenido": [
+        {
+          "titulo": "Variables y Tipos de Datos",
+          "texto": "JavaScript tiene varios tipos de datos fundamentales..."
+        },
+        {
+          "titulo": "Funciones y Scope",
+          "texto": "Las funciones son bloques de código reutilizables..."
+        }
+      ],
+      "evaluacion": {
+        "preguntas": [
+          {
+            "pregunta": "¿Qué es una variable en JavaScript?",
+            "opciones": [
+              "Un contenedor para almacenar datos",
+              "Una función",
+              "Un tipo de dato",
+              "Un operador"
+            ],
+            "respuestaCorrecta": 0
+          }
+        ]
+      }
+    }
+  ]
+}
