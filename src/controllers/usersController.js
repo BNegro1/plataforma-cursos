@@ -1,5 +1,3 @@
-// src/controllers/usersController.js
-
 const User = require('../models/Users');
 let currentUser = null; // Variable para almacenar el usuario actualmente logueado
 
@@ -21,7 +19,8 @@ exports.register = (req, res) => {
         // Validar campos vacíos
         if (!name || !email || !password) {
             console.error('Error: Campos vacíos', { name, email, password });
-            res.writeHead(302, { Location: '/register?error=1' }); // Redirige con error=1
+            // Redirige con un indicador de error
+            res.writeHead(302, { Location: '/register?error=1' });
             return res.end();
         }
 
@@ -29,12 +28,15 @@ exports.register = (req, res) => {
         User.createUser(name, email, password, (err) => {
             if (err) {
                 console.error('Error al registrar usuario:', err);
-                res.writeHead(302, { Location: '/register?error=1' }); // error de DB
+                // Error de DB => indicamos error
+                res.writeHead(302, { Location: '/register?error=1' });
                 return res.end();
             }
 
-            // Registro exitoso => /register?success=1
-            res.writeHead(302, { Location: '/register?success=1' });
+            // ÉXITO => Guardar como logueado
+            currentUser = name;  // El user se loguea automáticamente con su 'name'
+            // Redirigir a "/" con una query success=reg (o como gustes)
+            res.writeHead(302, { Location: '/?success=reg' });
             res.end();
         });
     });
@@ -57,6 +59,7 @@ exports.login = (req, res) => {
         // Verificar campos vacíos
         if (!email || !password) {
             console.error('Error: email o password vacío');
+            // Redirige con error
             res.writeHead(302, { Location: '/login?error=1' });
             return res.end();
         }
@@ -68,10 +71,10 @@ exports.login = (req, res) => {
                 res.writeHead(302, { Location: '/login?error=1' });
                 return res.end();
             }
-            currentUser = user.name; // Guardar el nombre del usuario actual
+            currentUser = user.name; // Guardar el nombre del usuario actual (logueado)
 
-            // Login exitoso => /login?success=1
-            res.writeHead(302, { Location: '/login?success=1' });
+            // Login exitoso => /?success=log
+            res.writeHead(302, { Location: '/?success=log' });
             res.end();
         });
     });

@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Elearn - Cursos/Capacitaciones</title>
+    <!-- Tus hojas de estilo (Bootstrap y demás) -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css?h=a549af2a81cd9900ee897d8bc9c4b5e9">
     <link rel="stylesheet" href="/assets/css/bs-theme-overrides.css?h=80e742112f38013bb02e83350a3546fe">
     <link rel="stylesheet"
@@ -22,7 +23,7 @@
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <span
                     class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon">
-                    <!-- Icono -->
+                    <!-- Ícono -->
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" fill="currentColor"
                         viewBox="0 0 16 16" class="bi bi-book-fill">
                         <path
@@ -39,15 +40,13 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- AQUÍ usaremos un placeholder que el router.js reemplazará -->
+            <!-- Placeholder para el navbar que el router.js reemplazará -->
             <div class="collapse navbar-collapse" id="navcol-2">
                 {{dynamic_nav}}
             </div>
         </div>
     </nav>
     <!-- End: Navbar Right Links -->
-
-
 
 
     <div class="container py-4 py-xl-5">
@@ -59,51 +58,119 @@
         </div>
         <div class="row gy-4 row-cols-1 row-cols-md-2 row-cols-xl-3">
             <div class="col">
-                <div class="card"><img
-                        class="card-img-top w-100 d-block card-img-top w-100 card-img-top w-100 fit-cover"
+                <div class="card">
+                    <img class="card-img-top w-100 d-block card-img-top w-100 fit-cover"
                         alt="monitor showing Java programming" style="height:200px;"
                         src="/assets/img/g9a124ce5b7a7835f471a7572b7dd18fe09f48d209e768bade848fc9ead0e11c1be514f133cee6c371bb1ba95e50ae73eb6b030042572cf9b64b0919ac9ae27bb_640.jpg?h=6faa2df506cd02273245ea807a4eec4f"
                         width="414" height="200">
                     <div class="card-body p-4">
                         <h4 class="card-title">Curso básico de Excel</h4>
                         <p class="card-text"><br>Aprende las herramientas esenciales de Excel, desde fórmulas básicas
-                            hasta la creación de gráficos dinámicos.</p><button class="btn btn-primary"
-                            type="button">Más información</button>
+                            hasta la creación de gráficos dinámicos.</p>
+                        <button class="btn btn-primary" type="button">Más información</button>
                     </div>
                 </div>
             </div>
+
             <div class="col">
-                <div class="card"><img
-                        class="card-img-top w-100 d-block card-img-top w-100 card-img-top w-100 fit-cover"
-                        alt="mathematics computation" style="height:200px;"
+                <div class="card">
+                    <img class="card-img-top w-100 d-block card-img-top w-100 fit-cover" alt="mathematics computation"
+                        style="height:200px;"
                         src="/assets/img/photo-1516321497487-e288fb19713f.jpg?h=2783d19dc0f8cc14a7bdd1f58c43eb47">
                     <div class="card-body p-4">
                         <h4 class="card-title">Curso de Marketing</h4>
                         <p class="card-text"><br>Descubre cómo diseñar estrategias efectivas en redes sociales y
-                            gestionar campañas publicitarias.<br><br></p><button class="btn btn-primary"
-                            type="button"><span style="background-color: rgb(11, 94, 215);">Más
-                                información</span></button>
+                            gestionar campañas publicitarias.<br><br></p>
+                        <button class="btn btn-primary" type="button">
+                            <span style="background-color: rgb(11, 94, 215);">Más información</span>
+                        </button>
                     </div>
                 </div>
             </div>
+
             <div class="col">
-                <div class="card"><img
-                        class="card-img-top w-100 d-block card-img-top w-100 card-img-top w-100 fit-cover"
+                <div class="card">
+                    <img class="card-img-top w-100 d-block card-img-top w-100 fit-cover"
                         alt="a black and white photo of a number of calculations" style="height:200px;"
                         src="/assets/img/pexels-photo-159888.jpeg?h=9cf7a27575890ca228e3c61ee2fda255">
                     <div class="card-body p-4">
                         <h4 class="card-title">Curso de Finanzas</h4>
-                        <p class="card-text">Aprende a gestionar tus finanzas personales, crear presupuestos y tomar
-                            decisiones de inversión inteligentes.<br><br></p><button class="btn btn-primary"
-                            type="button">Más informacióm</button>
+                        <p class="card-text">
+                            Aprende a gestionar tus finanzas personales, crear presupuestos y tomar
+                            decisiones de inversión inteligentes.<br><br>
+                        </p>
+                        <button class="btn btn-primary" type="button">Más informacióm</button>
                         <div class="d-flex"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Toasts para mostrar "Registro Exitoso" o "Login Exitoso" en index -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+        <!-- Toast de Registro -->
+        <div id="regToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Registro Exitoso! Ya estás logueado.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Toast de Login -->
+        <div id="logToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Login Exitoso!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts Bootstrap -->
     <script src="/assets/bootstrap/js/bootstrap.min.js?h=374d178d651fa0eaf680a1fa7b40c788"></script>
+    <!-- Opcional: Multi-step form script si lo necesitas -->
     <script src="/assets/js/Multi-step-form-script.js?h=9d77f79e2607cd56cca90be479eb60a6"></script>
+
+    <!-- Script para manejar los toasts según la query success=reg / success=log -->
+    <script>
+        /*
+         * Suponiendo que en router.js haces algo como:
+         *  updatedHTML = updatedHTML.replace('{{successParam}}', query.success || '');
+         * Este placeholder quedará aquí en 'successFlag'.
+        */
+        const successFlag = '{{successParam}}';  // "reg", "log", o vacío.
+
+        if (successFlag === 'reg') {
+            // Mostrar toast de registro
+            const toastEl = document.getElementById('regToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        } else if (successFlag === 'log') {
+            // Mostrar toast de login
+            const toastEl = document.getElementById('logToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>
 </body>
 
 </html>
+<!--
+Datos testeo: 
+Nombre: asdasd
+Email: asdasd@gmail.com
+Pw: asdasd@gmail.com
+
+
+XD
+
+-->
+

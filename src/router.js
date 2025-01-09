@@ -1,5 +1,3 @@
-// src/router.js
-
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -9,7 +7,7 @@ const usersController = require('./controllers/usersController');
 function checkAuth(req, res) {
     const currentUser = usersController.getCurrentUser();
     if (!currentUser) {
-        // No está logueado: redirigimos a /login
+        // No está logueado: redirigir a /login
         res.writeHead(302, { Location: '/login' });
         res.end();
         return false;
@@ -19,7 +17,7 @@ function checkAuth(req, res) {
 
 const router = (req, res) => {
     const parsedUrl = url.parse(req.url, true);
-    const { pathname } = parsedUrl;
+    const { pathname, query } = parsedUrl;
 
     // 1) Servir archivos estáticos (CSS, JS, imágenes)
     if (pathname.startsWith('/assets')) {
@@ -94,13 +92,29 @@ const router = (req, res) => {
             let updatedHTML = data.replace('{{username}}', currentUser || 'Cuenta');
             updatedHTML = updatedHTML.replace('{{dynamic_nav}}', finalNav);
 
+            // "{{successParam}}" para mostar toasts segun query
+            // Por ejemplo, si ?success=reg => "Registro Exitoso", ?success=log => "Login Exitoso"
+            // Entonce, "index.html" puede mostrar un toast en base a ?success=reg / ?success=log
+            updatedHTML = updatedHTML.replace('{{successParam}}', query.success || '');
+
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(updatedHTML);
         });
         return;
     }
 
-    // 3) Login (GET)
+    // 3) Si el usuario YA está logueado, prohibir /login y /register
+    if ((pathname === '/login' || pathname === '/register') && req.method === 'GET') {
+        const currentUser = usersController.getCurrentUser();
+        if (currentUser) {
+            // Ya logueado => redirigimos a /
+            res.writeHead(302, { Location: '/' });
+            res.end();
+            return;
+        }
+    }
+
+    // 3.1) Servir /login (GET) si no está logueado
     if (pathname === '/login' && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'login.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -113,7 +127,7 @@ const router = (req, res) => {
         });
         return;
     }
-    // 3) Register (GET)
+    // 3.2) Servir /register (GET) si no está logueado
     if (pathname === '/register' && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'registro.html');
         fs.readFile(filePath, 'utf8', (err, data) => {

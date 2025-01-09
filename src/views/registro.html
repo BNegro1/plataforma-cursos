@@ -7,29 +7,22 @@
     <title>Elearn - Registro</title>
     <!-- Bootstrap principal -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/assets/css/bs-theme-overrides.css">
-    <!-- Tus CSS / overrides -->
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
-    <!-- CONTENEDOR PRINCIPAL (izquierda + derecha) -->
     <div class="container-principal">
         <!-- Sección Izquierda -->
         <div class="left-section">
-            <h1>Aprende con
-                <span style="font-size: 1.8em;">ELearn</span>
-            </h1>
-            <p>
-                Cursos reales con expertos y contenido gratuito.
-            </p>
+            <h1>Aprende con <span style="font-size: 1.8em;">ELearn</span></h1>
+            <p>Cursos reales con expertos y contenido gratuito.</p>
         </div>
 
         <!-- Sección Derecha (Formulario de Registro) -->
         <div class="right-section">
             <h1>¡Bienvenido!</h1>
             <h2>Regístrate en ELearn</h2>
-            <!-- Formulario -->
+
             <form method="post" action="/register">
                 <label for="name">Nombre</label>
                 <input type="text" name="name" id="name" placeholder="Nombre" required>
@@ -51,21 +44,8 @@
         </div>
     </div>
 
-    <!-- TOASTS: éxito y error -->
+    <!-- Toast error (por si ?error=1 en register) -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
-        <!-- Toast ÉXITO -->
-        <div id="successToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert"
-            aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    ¡Usuario registrado exitosamente!
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
-                    aria-label="Close"></button>
-            </div>
-        </div>
-
-        <!-- Toast ERROR -->
         <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
             aria-atomic="true">
             <div class="d-flex">
@@ -78,21 +58,11 @@
         </div>
     </div>
 
-    <!-- Script de Bootstrap -->
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
     <script>
-        // Lee la query string: /register?success=1 o ?error=1
+        // Si redirigimos a /register?error=1, muestra toast de error
         const params = new URLSearchParams(window.location.search);
-
-        if (params.get('success') === '1') {
-            // Muestra el toast de éxito
-            const toastEl = document.getElementById('successToast');
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-
         if (params.get('error') === '1') {
-            // Muestra el toast de error
             const toastEl = document.getElementById('errorToast');
             const toast = new bootstrap.Toast(toastEl);
             toast.show();
