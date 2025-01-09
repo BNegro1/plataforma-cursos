@@ -39,28 +39,15 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Links del Navbar -->
+            <!-- AQUÍ usaremos un placeholder que el router.js reemplazará -->
             <div class="collapse navbar-collapse" id="navcol-2">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- Perfil de {{username}} redirige a /perfil -->
-                        <a class="nav-link" href="/perfil">Perfil de {{username}}</a>
-                    </li>
-                    <li class="nav-item">
-                        <!-- Enlace para cerrar sesión -->
-                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
-                    </li>
-                </ul>
+                {{dynamic_nav}}
             </div>
         </div>
     </nav>
     <!-- End: Navbar Right Links -->
+
+
 
 
     <div class="container py-4 py-xl-5">

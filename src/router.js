@@ -43,7 +43,7 @@ const router = (req, res) => {
         return;
     }
 
-    // 2) Página principal accesible de !! forma anónima !!!
+    // 2) Página principal accesible de forma anónima
     if (pathname === '/' && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'index.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -51,14 +51,60 @@ const router = (req, res) => {
                 res.writeHead(500, { 'Content-Type': 'text/plain' });
                 return res.end('Error al cargar index.html');
             }
-            // Insertar el nombre del usuario SI está logueado
             const currentUser = usersController.getCurrentUser();
-            const updatedHTML = data.replace('{{username}}', currentUser || 'Cuenta');
+
+            // Navbar para usuario NO logueado
+            const navLoggedOut = `
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Ingresar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Registrar</a>
+                </li>
+            </ul>
+        `;
+
+            // Navbar para usuario SÍ logueado
+            const navLoggedIn = `
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/perfil">Perfil de ${currentUser}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                </li>
+            </ul>
+        `;
+
+            // Elige cuál insertar
+            let finalNav;
+            if (currentUser) {
+                finalNav = navLoggedIn;
+            } else {
+                finalNav = navLoggedOut;
+            }
+
+            // Reemplaza tanto {{username}} como {{dynamic_nav}}
+            let updatedHTML = data.replace('{{username}}', currentUser || 'Cuenta');
+            updatedHTML = updatedHTML.replace('{{dynamic_nav}}', finalNav);
+
+
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(updatedHTML);
         });
         return;
     }
+
 
     // 3) Login y Register (GET) accesibles sin estar logueado
     if (pathname === '/login' && req.method === 'GET') {
@@ -103,8 +149,24 @@ const router = (req, res) => {
         return;
     }
 
-    // 4) Cualquier otro .html => requiere estar logueado
-    //    (Ej: /perfil => perfil.html, /curso-excel => curso-excel.html, etc.)
+    // 4) RUTA /perfil => corresponde al archivo views/perfil.html
+    //    Requiere estar logueado para acceder.
+    if (pathname === '/perfil' && req.method === 'GET') {
+        if (!checkAuth(req, res)) return;  // Si no está logueado, redirige /login
+        const filePath = path.join(__dirname, 'views', 'perfil.html');
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                return res.end('No se encontró perfil.html');
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(data);
+        });
+        return;
+    }
+
+    // 5) Cualquier otro .html => requiere estar logueado
+    //    Ej: /curso-excel => curso-excel.html
     if (pathname.endsWith('.html') && req.method === 'GET') {
         // Filtrar: si NO es 'index.html', 'login.html', ni 'registro.html',
         // entonces se pide checkAuth
@@ -131,7 +193,7 @@ const router = (req, res) => {
         return;
     }
 
-    // 5) Si no es un .html ni una ruta contemplada, 404
+    // 6) Si no es un .html ni una ruta contemplada, 404
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Ruta no encontrada');
 };
