@@ -44,7 +44,7 @@ const router = (req, res) => {
     }
 
     // 2) Página principal accesible de forma anónima
-    if (pathname === '/' && req.method === 'GET') {
+    if ((pathname === '/' || pathname === '/index.html') && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'index.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
