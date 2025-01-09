@@ -5,25 +5,21 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>ELearn - Ingreso</title>
-    <!-- Referencias a Bootstrap -->
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <!-- Overrides/theme -->
     <link rel="stylesheet" href="/assets/css/bs-theme-overrides.css">
-    <!-- Referencia a nuestro estilo personalizado -->
+    <!-- Estilos propios -->
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
 <body>
-
     <!-- CONTENEDOR PRINCIPAL -->
     <div class="container-principal">
         <!-- Sección Izquierda -->
         <div class="left-section">
-            <h1>Aprende con
-                <span style="font-size: 1.8em;">ELearn</span>
-            </h1>
-            <p>
-                Cursos reales con expertos y contenido gratuito.
-            </p>
+            <h1>Aprende con <span style="font-size: 1.8em;">ELearn</span></h1>
+            <p>Cursos reales con expertos y contenido gratuito.</p>
         </div>
 
         <!-- Sección Derecha (Formulario de Ingreso) -->
@@ -51,8 +47,53 @@
         </div>
     </div>
 
-    <!-- Script de Bootstrap -->
+    <!-- TOASTS (éxito y error) -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+        <!-- Toast de ÉXITO -->
+        <div id="successToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Has iniciado sesión exitosamente!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Toast de ERROR -->
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Error al iniciar sesión! Revisa tus datos.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        // Revisar la query string (ej: /login?success=1 o /login?error=1)
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('success') === '1') {
+            // Muestra toast verde
+            const toastEl = document.getElementById('successToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        if (params.get('error') === '1') {
+            // Muestra toast rojo
+            const toastEl = document.getElementById('errorToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>
 </body>
 
 </html>

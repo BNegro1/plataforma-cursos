@@ -1,3 +1,5 @@
+// src/controllers/usersController.js
+
 const User = require('../models/Users');
 let currentUser = null; // Variable para almacenar el usuario actualmente logueado
 
@@ -14,24 +16,26 @@ exports.register = (req, res) => {
         const email = params.get('email');
         const password = params.get('password');
 
-        console.log('Datos recibidos:', { name, email, password }); // Depuración
+        console.log('Datos recibidos (registro):', { name, email, password }); // Log en la consola del servidor
 
         // Validar campos vacíos
         if (!name || !email || !password) {
-            console.error('Campos vacíos:', { name, email, password });
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            return res.end('Error: Todos los campos son obligatorios');
+            console.error('Error: Campos vacíos', { name, email, password });
+            res.writeHead(302, { Location: '/register?error=1' }); // Redirige con error=1
+            return res.end();
         }
 
         // Crear el usuario en la base de datos
         User.createUser(name, email, password, (err) => {
             if (err) {
                 console.error('Error al registrar usuario:', err);
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                return res.end('Error al registrar usuario');
+                res.writeHead(302, { Location: '/register?error=1' }); // error de DB
+                return res.end();
             }
-            res.writeHead(200, { 'Content-Type': 'text/plain' });
-            res.end('Usuario registrado exitosamente');
+
+            // Registro exitoso => /register?success=1
+            res.writeHead(302, { Location: '/register?success=1' });
+            res.end();
         });
     });
 };
@@ -48,35 +52,36 @@ exports.login = (req, res) => {
         const email = params.get('email');
         const password = params.get('password');
 
-        console.log('Intento de inicio de sesión:', { email, password }); // Depuración
+        console.log('Intento de login:', { email, password }); // Depuración en la consola
 
         // Verificar campos vacíos
         if (!email || !password) {
-            console.error('Campos vacíos:', { email, password });
-            res.writeHead(400, { 'Content-Type': 'text/plain' });
-            return res.end('Error: Todos los campos son obligatorios');
+            console.error('Error: email o password vacío');
+            res.writeHead(302, { Location: '/login?error=1' });
+            return res.end();
         }
 
         // Autenticar al usuario
         User.authenticate(email, password, (err, user) => {
             if (err || !user) {
                 console.error('Error al autenticar usuario:', err || 'Credenciales inválidas');
-                res.writeHead(401, { 'Content-Type': 'text/plain' });
-                return res.end('Credenciales inválidas');
+                res.writeHead(302, { Location: '/login?error=1' });
+                return res.end();
             }
             currentUser = user.name; // Guardar el nombre del usuario actual
-            // Redirigir al index después del login
-            res.writeHead(302, { Location: '/' });
+
+            // Login exitoso => /login?success=1
+            res.writeHead(302, { Location: '/login?success=1' });
             res.end();
         });
     });
 };
 
-// <-- Nuevo método para cerrar sesión -->
+// Cerrar sesión
 exports.logout = (req, res) => {
     console.log('Cerrando sesión del usuario:', currentUser);
     currentUser = null;
-    // Redirigir a /login (o /, según quieras)
+    // Redirigir a /login
     res.writeHead(302, { Location: '/login' });
     res.end();
 };

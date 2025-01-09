@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>ELearn - Registro</title>
-    <!-- Referencias a Bootstrap -->
+    <title>Elearn - Registro</title>
+    <!-- Bootstrap principal -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/bs-theme-overrides.css">
-    <!-- Referencia a nuestro estilo personalizado -->
+    <!-- Tus CSS / overrides -->
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
@@ -51,8 +51,53 @@
         </div>
     </div>
 
-    <!-- Script de Bootstrap (opcional, si lo usas) -->
+    <!-- TOASTS: éxito y error -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+        <!-- Toast ÉXITO -->
+        <div id="successToast" class="toast align-items-center text-bg-success border-0 mb-2" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Usuario registrado exitosamente!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+
+        <!-- Toast ERROR -->
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
+            aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ¡Hubo un error al registrarse! Verifica tus datos.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Bootstrap -->
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        // Lee la query string: /register?success=1 o ?error=1
+        const params = new URLSearchParams(window.location.search);
+
+        if (params.get('success') === '1') {
+            // Muestra el toast de éxito
+            const toastEl = document.getElementById('successToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        if (params.get('error') === '1') {
+            // Muestra el toast de error
+            const toastEl = document.getElementById('errorToast');
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>
 </body>
 
 </html>

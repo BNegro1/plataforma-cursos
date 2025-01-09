@@ -1,3 +1,5 @@
+// src/router.js
+
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
@@ -55,49 +57,42 @@ const router = (req, res) => {
 
             // Navbar para usuario NO logueado
             const navLoggedOut = `
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/login">Ingresar</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/register">Registrar</a>
-                </li>
-            </ul>
-        `;
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Ingresar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Registrar</a>
+                    </li>
+                </ul>
+            `;
 
             // Navbar para usuario SÍ logueado
             const navLoggedIn = `
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Inicio</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/perfil">Perfil de ${currentUser}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Cerrar Sesión</a>
-                </li>
-            </ul>
-        `;
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/perfil">Perfil de ${currentUser}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            `;
 
             // Elige cuál insertar
-            let finalNav;
-            if (currentUser) {
-                finalNav = navLoggedIn;
-            } else {
-                finalNav = navLoggedOut;
-            }
+            const finalNav = currentUser ? navLoggedIn : navLoggedOut;
 
-            // Reemplaza tanto {{username}} como {{dynamic_nav}}
             let updatedHTML = data.replace('{{username}}', currentUser || 'Cuenta');
             updatedHTML = updatedHTML.replace('{{dynamic_nav}}', finalNav);
-
 
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(updatedHTML);
@@ -105,8 +100,7 @@ const router = (req, res) => {
         return;
     }
 
-
-    // 3) Login y Register (GET) accesibles sin estar logueado
+    // 3) Login (GET)
     if (pathname === '/login' && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'login.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -119,7 +113,7 @@ const router = (req, res) => {
         });
         return;
     }
-
+    // 3) Register (GET)
     if (pathname === '/register' && req.method === 'GET') {
         const filePath = path.join(__dirname, 'views', 'registro.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
@@ -143,16 +137,15 @@ const router = (req, res) => {
         return;
     }
 
-    // 3.1) Logout (GET)
+    // Logout (GET)
     if (pathname === '/logout' && req.method === 'GET') {
         usersController.logout(req, res);
         return;
     }
 
-    // 4) RUTA /perfil => corresponde al archivo views/perfil.html
-    //    Requiere estar logueado para acceder.
+    // 4) RUTA /perfil => requiere login
     if (pathname === '/perfil' && req.method === 'GET') {
-        if (!checkAuth(req, res)) return;  // Si no está logueado, redirige /login
+        if (!checkAuth(req, res)) return;  // si no está logueado, redirige a /login
         const filePath = path.join(__dirname, 'views', 'perfil.html');
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
@@ -165,23 +158,19 @@ const router = (req, res) => {
         return;
     }
 
-    // 5) Cualquier otro .html => requiere estar logueado
-    //    Ej: /curso-excel => curso-excel.html
+    // 5) Cualquier otro .html => requiere login
     if (pathname.endsWith('.html') && req.method === 'GET') {
-        // Filtrar: si NO es 'index.html', 'login.html', ni 'registro.html',
-        // entonces se pide checkAuth
         if (
             pathname !== '/index.html' &&
             pathname !== '/login.html' &&
             pathname !== '/registro.html'
         ) {
             if (!checkAuth(req, res)) {
-                // si no pasa checkAuth, ya redirigió a /login
                 return;
             }
         }
-        // Servir el .html
-        const filePath = path.join(__dirname, 'views', pathname.substring(1)); // quita la primera '/'
+        // Servir .html
+        const filePath = path.join(__dirname, 'views', pathname.substring(1));
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
@@ -193,7 +182,7 @@ const router = (req, res) => {
         return;
     }
 
-    // 6) Si no es un .html ni una ruta contemplada, 404
+    // 6) 404
     res.writeHead(404, { 'Content-Type': 'text/plain' });
     res.end('Ruta no encontrada');
 };
