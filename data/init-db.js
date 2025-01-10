@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 // NOTA !:
 
-// Modificar para agregar más tablas o campos según sea necesario.
+// Modificar para agregar más tablas
 
 // Conexión a la base de datos SQLite
 const db = new sqlite3.Database('./data/db.sqlite', (err) => {
