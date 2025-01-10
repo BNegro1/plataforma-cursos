@@ -173,22 +173,35 @@ const router = (req, res) => {
     }
 
     // 5) Cualquier otro .html => requiere login
+    // Basicamente, acá están las vistas que requieren login.
     if (pathname.endsWith('.html') && req.method === 'GET') {
         if (
             pathname !== '/index.html' &&
             pathname !== '/login.html' &&
-            pathname !== '/registro.html'
+            pathname !== '/registro.html' 
+            // Nota: Aquí se pueden agregar más rutas que requieran login (ej: /perfil.html).
+
         ) {
+            // Este código es para que si no está logueado, redirija a /login
+            // Ejemplo: si intenta acceder a /perfil.html sin estar logueado, lo redirige a /login
             if (!checkAuth(req, res)) {
                 return;
             }
         }
-        // Servir .html
-        const filePath = path.join(__dirname, 'views', pathname.substring(1));
+        
+        // Comentaré este código en los siguientes parrafos:
+        // Este código es para servir archivos .html que no sean /index.html, /login.html, /registro.html
+
+        // Por ejemplo, si se accede a /perfil.html, /dashboard.html, /config.html, etc.
+
+        // La idea es que si no está logueado, lo redirija a /login
+        // Si está logueado, entonces sirve el archivo .html solicitado
+
+        const filePath = path.join(__dirname, 'views', pathname.substring(1)); // quitar el "/" del inicio. Esto se hace con el fin de sea mas facil acceder a los archivos .html
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
                 res.writeHead(404, { 'Content-Type': 'text/plain' });
-                return res.end(`No se encontró el archivo: ${pathname}`);
+                return res.end(`No se encontró el archivo: ${pathname}`); 
             }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             res.end(data);
