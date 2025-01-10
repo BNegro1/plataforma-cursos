@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Elearn - Registro</title>
-    <!-- Bootstrap principal -->
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
@@ -44,7 +43,7 @@
         </div>
     </div>
 
-    <!-- Toast error (por si ?error=1 en register) -->
+    <!-- Toast error -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 2000;">
         <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive"
             aria-atomic="true">
@@ -57,17 +56,8 @@
             </div>
         </div>
     </div>
-
     <script src="/assets/bootstrap/js/bootstrap.min.js"></script>
-    <script>
-        // Si redirigimos a /register?error=1, muestra toast de error
-        const params = new URLSearchParams(window.location.search);
-        if (params.get('error') === '1') {
-            const toastEl = document.getElementById('errorToast');
-            const toast = new bootstrap.Toast(toastEl);
-            toast.show();
-        }
-    </script>
+    <script src="/assets/js/verificar-ruta.js"></script>
 </body>
 
 </html>
