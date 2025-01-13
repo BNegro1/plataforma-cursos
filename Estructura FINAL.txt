@@ -56,10 +56,6 @@ d:/Repositorios Oficial/plataforma-cursos/
 │   └── views/
 │       ├── layouts/     # Plantillas base
 │       │   └── main.html
-│       ├── partials/    # Componentes reutilizables
-│       │   ├── header.html
-│       │   ├── footer.html
-│       │   └── navbar.html
 │       ├── auth/        # Vistas de autenticación
 │       │   ├── login.html
 │       │   └── register.html

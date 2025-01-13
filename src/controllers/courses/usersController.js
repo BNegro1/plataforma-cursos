@@ -1,4 +1,4 @@
-const User = require('../models/Users');
+const User = require('../../models/Users');
 let currentUser = null; // Variable para almacenar el usuario actualmente logueado
 
 // Controlador para registrar usuarios

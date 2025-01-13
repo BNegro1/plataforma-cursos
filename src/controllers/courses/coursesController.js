@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Course = require('../models/Course');
+const Course = require('../../models/Course');
 
 const getCourses = (req, res) => {
     Course.getAllCourses((err, courses) => {

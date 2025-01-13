@@ -1,25 +1,56 @@
 const fs = require('fs');
 const path = require('path');
 const url = require('url');
-const usersController = require('./controllers/usersController');
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const courseRoutes = require('./routes/courseRoutes');
+const authController = require('./controllers/auth/authController');
 
-// Función para verificar si hay un usuario logueado
-function checkAuth(req, res) {
-    const currentUser = usersController.getCurrentUser();
-    if (!currentUser) {
-        // No está logueado: redirigir a /login
-        res.writeHead(302, { Location: '/login' });
-        res.end();
-        return false;
+// Renderizado: plantilla base + contenido específico
+const renderWithLayout = async (res, contentPath, data = {}) => { // Esta función se encarga de renderizar la plantilla base con el contenido específico de cada página !!!
+
+    try {
+        // Leer la plantilla base
+        const layoutPath = path.join(__dirname, 'views/layouts/main.html');
+        const layout = await fs.promises.readFile(layoutPath, 'utf8');
+
+        // Leer el contenido específico (Por ejemplo, 'views/index.html' será de la ruta '/index.html')
+
+        // Entonces, el flujo sería: '/index.html' -> 'views/index.html', en las lineas de este archivo es: '/auth/login' -> 'views/auth/login.html', '/auth/registro' -> 'views/auth/registro.html', '/users/perfil' -> 'views/users/perfil.html', '/courses/crear' -> 'views/courses/crear-curso.html'.
+
+        const contentFilePath = path.join(__dirname, 'views', contentPath);
+        const content = await fs.promises.readFile(contentFilePath, 'utf8');
+
+        // Preparar datos base para la plantilla
+        const baseData = {
+            title: 'Elearn',
+            dynamic_nav: getDynamicNav(authController.getCurrentUser()),
+            content: content,
+            ...data
+        };
+
+        // Reemplazar TODAS las variables
+        let html = layout;
+        for (const [key, value] of Object.entries(baseData)) {
+            html = html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+        }
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
+    } catch (err) {
+        console.error('Error al renderizar:', err);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error interno del servidor');
     }
-    return true;
-}
+};
 
-const router = (req, res) => {
+// Rutas PROTEGIDAS
+const protectedRoutes = ['/perfil', '/cursos/crear'];
+
+const router = async (req, res, logger) => {
     const parsedUrl = url.parse(req.url, true);
     const { pathname, query } = parsedUrl;
 
-    // 1) Servir archivos estáticos (CSS, JS, imágenes)
+    // Servir archivos estáticos
     if (pathname.startsWith('/assets')) {
         const filePath = path.join(__dirname, '..', pathname);
         fs.readFile(filePath, (err, data) => {
@@ -43,175 +74,111 @@ const router = (req, res) => {
         return;
     }
 
-    // 2) Página principal accesible de forma anónima
-    if ((pathname === '/' || pathname === '/index.html') && req.method === 'GET') {
-        const filePath = path.join(__dirname, 'views', 'index.html');
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                return res.end('Error al cargar index.html');
-            }
-            const currentUser = usersController.getCurrentUser();
-
-            // Navbar para usuario NO logueado
-            const navLoggedOut = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Ingresar</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Registrar</a>
-                    </li>
-                </ul>
-            `;
-
-            // Navbar para usuario SÍ logueado
-            const navLoggedIn = `
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/perfil">Perfil de ${currentUser}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
-                    </li>
-                </ul>
-            `;
-
-            // Elige cuál insertar
-            const finalNav = currentUser ? navLoggedIn : navLoggedOut;
-
-            let updatedHTML = data.replace('{{username}}', currentUser || 'Cuenta');
-            updatedHTML = updatedHTML.replace('{{dynamic_nav}}', finalNav);
-
-            // "{{successParam}}" para mostar toasts segun query
-            // Por ejemplo, si ?success=reg => "Registro Exitoso", ?success=log => "Login Exitoso"
-            // Entonce, "index.html" puede mostrar un toast en base a ?success=reg / ?success=log
-            updatedHTML = updatedHTML.replace('{{successParam}}', query.success || '');
-
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(updatedHTML);
-        });
-        return;
-    }
-
-    // 3) Si el usuario YA está logueado, prohibir /login y /register
-    if ((pathname === '/login' || pathname === '/register') && req.method === 'GET') {
-        const currentUser = usersController.getCurrentUser();
-        if (currentUser) {
-            // Ya logueado => redirigimos a /
-            res.writeHead(302, { Location: '/' });
-            res.end();
-            return;
+    // Verificar autenticaciónn para rutas protegidass
+    if (protectedRoutes.some(route => pathname.startsWith(route))) {
+        const currentUser = authController.getCurrentUser();
+        if (!currentUser) {
+            res.writeHead(302, { Location: '/auth/login?error=auth' });
+            return res.end();
         }
     }
 
-    // 3.1) Servir /login (GET) si no está logueado
-    if (pathname === '/login' && req.method === 'GET') {
-        const filePath = path.join(__dirname, 'views', 'login.html');
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                return res.end('Error al cargar login.html');
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
-        return;
-    }
-    // 3.2) Servir /register (GET) si no está logueado
-    if (pathname === '/register' && req.method === 'GET') {
-        const filePath = path.join(__dirname, 'views', 'registro.html');
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(500, { 'Content-Type': 'text/plain' });
-                return res.end('Error al cargar registro.html');
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
-        return;
-    }
+    // Ruteo
+    try {
+        switch (pathname) {
+            case '/':
+            case '/index.html':
+                return await renderWithLayout(res, 'index.html', {
+                    title: 'Elearn - Inicio',
+                    successParam: query.success || ''
+                });
 
-    // Manejo POST de login/register
-    if (pathname === '/login' && req.method === 'POST') {
-        usersController.login(req, res);
-        return;
-    }
-    if (pathname === '/register' && req.method === 'POST') {
-        usersController.register(req, res);
-        return;
-    }
+            case '/auth/login':
+                if (authController.getCurrentUser()) {
+                    res.writeHead(302, { Location: '/' });
+                    return res.end();
+                }
+                return await renderWithLayout(res, 'auth/login.html', {
+                    title: 'Elearn - Login'
+                });
 
-    // Logout (GET)
-    if (pathname === '/logout' && req.method === 'GET') {
-        usersController.logout(req, res);
-        return;
-    }
+            case '/auth/registro':
+                if (authController.getCurrentUser()) {
+                    res.writeHead(302, { Location: '/' });
+                    return res.end();
+                }
+                return await renderWithLayout(res, 'auth/registro.html', {
+                    title: 'Elearn - Registro'
+                });
 
-    // 4) RUTA /perfil => requiere login
-    if (pathname === '/perfil' && req.method === 'GET') {
-        if (!checkAuth(req, res)) return;  // si no está logueado, redirige a /login
-        const filePath = path.join(__dirname, 'views', 'perfil.html');
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                return res.end('No se encontró perfil.html');
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
-        return;
-    }
+            case '/users/perfil':
+                return await renderWithLayout(res, 'users/perfil.html', {
+                    title: 'Elearn - Perfil',
+                    userData: JSON.stringify(authController.getCurrentUser())
+                });
 
-    // 5) Cualquier otro .html => requiere login
-    // Basicamente, acá están las vistas que requieren login.
-    if (pathname.endsWith('.html') && req.method === 'GET') {
-        if (
-            pathname !== '/index.html' &&
-            pathname !== '/login.html' &&
-            pathname !== '/registro.html' 
-            // Nota: Aquí se pueden agregar más rutas que requieran login (ej: /perfil.html).
+            case '/courses/crear':
+                const user = authController.getCurrentUser();
+                if (user?.tipo !== 'docente') {
+                    res.writeHead(403, { 'Content-Type': 'text/plain' });
+                    return res.end('Acceso denegado');
+                }
+                return await renderWithLayout(res, 'courses/crear-curso.html', {
+                    title: 'Elearn - Crear Curso'
+                });
 
-        ) {
-            // Este código es para que si no está logueado, redirija a /login
-            // Ejemplo: si intenta acceder a /perfil.html sin estar logueado, lo redirige a /login
-            if (!checkAuth(req, res)) {
-                return;
-            }
+            default:
+                if (req.method === 'POST') {
+                    // Manejo de formularios POST
+                    if (pathname === '/auth/login') return authRoutes.handleLogin(req, res, logger);
+                    if (pathname === '/auth/registro') return authRoutes.handleRegister(req, res, logger);
+                    if (pathname === '/auth/logout') {
+                        logger.success('Usuario cerró sesión');
+                        return authRoutes.handleLogout(req, res);
+                    }
+                    if (pathname === '/courses/crear') return courseRoutes.handleCreateCourse(req, res);
+                }
+
+                // 404 para rutas no encontradas
+                logger.error(`Ruta no encontrada: ${pathname}`);
+                return await renderWithLayout(res, 'errors/404.html', {
+                    title: 'Elearn - Página no encontrada',
+                    path: pathname
+                });
         }
-        
-        // Comentaré este código en los siguientes parrafos:
-        // Este código es para servir archivos .html que no sean /index.html, /login.html, /registro.html
-
-        // Por ejemplo, si se accede a /perfil.html, /dashboard.html, /config.html, etc.
-
-        // La idea es que si no está logueado, lo redirija a /login
-        // Si está logueado, entonces sirve el archivo .html solicitado
-
-        const filePath = path.join(__dirname, 'views', pathname.substring(1)); // quitar el "/" del inicio. Esto se hace con el fin de sea mas facil acceder a los archivos .html
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                return res.end(`No se encontró el archivo: ${pathname}`); 
-            }
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(data);
-        });
-        return;
+    } catch (err) {
+        logger.error('Error en router:', err);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        res.end('Error interno del servidor');
     }
-
-    // 6) 404
-    res.writeHead(404, { 'Content-Type': 'text/plain' });
-    res.end('Ruta no encontrada');
 };
+
+
+
+
+
+// Helper para navegación dinámica 
+// Explicación: Si el usuario está logueado, se muestra un conjunto de links, si no, se muestra otro conjunto de links.
+// Aquí se define el contenido de la barra de navegación dependiendo si el usuario está logueado o no.	
+function getDynamicNav(user) {
+    if (!user) {
+        return `
+            <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            <li class="nav-item"><a class="nav-link" href="/auth/login">Ingresar</a></li>
+            <li class="nav-item"><a class="nav-link" href="/auth/registro">Registrar</a></li>
+        `;
+    }
+
+    return `
+        <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="/courses">Cursos</a></li>
+        ${user.tipo === 'docente' ?
+            '<li class="nav-item"><a class="nav-link" href="/courses/crear">Crear Curso</a></li>'
+            : ''
+        }
+        <li class="nav-item"><a class="nav-link" href="/users/perfil">Mi Perfil</a></li>
+        <li class="nav-item"><a class="nav-link" href="/auth/logout">Cerrar Sesión</a></li>
+    `;
+}
 
 module.exports = router;
