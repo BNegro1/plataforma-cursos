@@ -1,6 +1,5 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const bcrypt = require('bcrypt');
 
 const dbPath = path.join(__dirname, '../../../data/db.sqlite');
 const db = new sqlite3.Database(dbPath);
@@ -31,15 +30,6 @@ const authController = {
                         return res.end();
                     }
 
-                    const match = await bcrypt.compare(contrasenia, user.contrasenia);
-                    if (match) {
-                        currentUser = {
-                            id: user.id,
-                            rut: user.rut,
-                            nombre: `${user.nombre} ${user.apellido}`,
-                            correo: user.correo,
-                            tipo: user.tipo_usuario
-                        };
                         
                         res.writeHead(302, {
                             'Location': '/?success=log',
